@@ -1,0 +1,52 @@
+Preethika Kiruveedula 
+204912895
+Computer Science 33 - Spring 18
+Professor Reinman
+April 13, 2018
+                              Homework #1
+Problems 2.71 and 2.82
+71. 
+/*Failed attempt at xbyte */
+int xbyte(packed_t word, int bytenum)
+{
+	return (word >> (bytenum << 3)) & 0xFF;
+}
+
+A) This code is wrong because it when it extracts a byte and extends it into a 32-bit integer, it does not do sign extension. Therefore, it doesn't make
+sure that it maintains its sign and original value. 
+B) 
+int xbyte(packed_t word, int bytenum)
+{
+	//how many bits you need to shift
+	int temp = (3 - bytenum) << 3; 
+	//shift to left to get to the most signifcant bit
+	//cast to int in order to do an arithmetic shift
+	int temp2 = word >> temp; 
+	//shift for sign extension
+	return temp2 << 24; 
+}
+
+82.
+/* Create some arbitrary values */
+int x = random(); 
+int y = random(); 
+/* Convert to unsigned */
+unsigned ux = (unsigned) x; 
+unsigned uy = (unsigned) y; 
+Indicate whether or not the expression always yields 1. If it always yields 1, describe the underlying mathematical principles. Otherwise, give an examples 
+of arguments that mke it yield 0. 
+
+A)no it will not always yield 1, if x = tmin, y = tmin + 1 then x<y is true; however, -x = -tmin = tmax + 1 which will result in overflow and cause -x to wrap around, and -y will be tmax
+and will be greater than -x since no integer can be greater than tmax; therefore, -x is not greater than -y
+B)yes it will always yield 1, (x+y)<<4 equals x<<4 + y<<4 which equals 16*x + 16*y +y-x = 15*x + 17y
+C)yes it will always yield 1, x + ~x = -1  
+ = (-1 - x) + (-1 - y) + 1 
+ = -2 -x -y + 1 
+ = -1 -x -y = -1 - (x + y) 
+            = -1 - x -y
+-1 -x -y = -1 -x -y 
+D)yes it will always yield 1, (ux - uy) = -(uy - ux), ux - uy = -uy + ux, ux - uy = ux - uy, arithmetic operations don't change based on whether integers are signed/unsigned, so it 
+follows basic distributive properties
+E)yes it will always yield 1, because left shifting always fills the leftover spots with zeros, so the final binary will always by less than or equal to the original 
+
+
