@@ -1,0 +1,16 @@
+Preethika Kiruveedula
+204912895
+Professor Reinmann
+April 27, 2018
+                                     Homework #2
+If the application were to output the value of magic8ball[3][4] – what would it be? i.e. what would be
+returned from the statement printf(“%s”, magic8ball[3][4]);?
+
+Go over for the first element (64 bytes x 3) = 192 bytes
+Go over for the second element (8 bytes x 4) = 32 bytes
+192 bytes + 32 bytes = 224 bytes aka 28 lines which translates to the address 0x7fffffffc0d8.
+At this line there is 0x57 0x72 0x6f 0x6e 0x67 0x00 0x00 0x00
+0x00 = null so the string actually stops at 0x57 0x72 0x6f 0x6e 0x67
+Which translates to W r o n g.
+
+It will print out "Wrong". 
