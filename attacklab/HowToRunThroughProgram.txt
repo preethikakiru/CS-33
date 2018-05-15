@@ -1,0 +1,13 @@
+How to run your code through ctraget or rtarget:
+create a text file called phase1.txt (I used notepad)in which you write your solution
+then make sure to place the text file into your target folder
+then do 
+./hex2raw < phase1.txt > raw-phase1.txt 
+this command runs your text file though hex2raw and places the new txt file into raw-phase1.txt
+then do 
+./ctarget <raw-phase1.txt
+runnning your solution through ctarget
+or do 
+./rtarget <raw-phase1.txt
+running your solution through rtarget 
+dependent on what level you are on

