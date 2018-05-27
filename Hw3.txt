@@ -1,0 +1,30 @@
+Preethika Kiruveedula
+Computer Science 33
+Professor Reinman
+May 23, 2018
+                                             Homework #3
+Optimize this code for a memory-intensive application
+
+Original Problem:
+
+void transpose( int *dst, int *src, int dim)
+{
+	int i, j;
+	for (i = 0; i < dim; i++)
+		for( j = 0; j < dim; j++)
+			dst[j*dim + 1] = src[i*dim + j];
+}
+
+
+Solution/Optimized Code:
+
+void transpose_new( int *dst, int  *src, int dim)
+{
+	int i, j, ik, jk;
+	int block; 
+	for ( i = 0; i < dim; i += block)
+		for( j = 0; j < dim; j += block)
+			for( ik = i; (ik < i + block) && (ik < dim); ik++)
+				for( jk = j; (jk < j + block) && (jk < dim); jk++)
+					dst[jk*dim + ik] = src[ik*dim + jk]; 
+}
